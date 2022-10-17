@@ -1,0 +1,16 @@
+version: "3"
+services:
+  database:
+    image: postgres
+    container_name: database
+    restart: always
+    ports:
+      - 2345:5432
+    env_file:
+      - .env.test
+  node-app:
+    build: .
+    image: node-app-image
+    container_name: node-app
+    depends_on:
+      - database
