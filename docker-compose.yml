@@ -1,0 +1,41 @@
+version: "3"
+services:
+  database:
+    image: postgres
+    container_name: database
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    env_file:
+      - ./back-end/.env
+  node-app:
+    build: ./back-end
+    image: node-app-image
+    container_name: node-app
+    ports:
+      - 5000:5000
+    depends_on:
+      - database
+  front-app:
+    build: ./front-end
+    image: react-app-image
+    container_name: front-app
+    volumes:
+      - front-end-files:/var/www/html
+  nginx:
+    build: ./nginx
+    image: nginx-image
+    container_name: nginx
+    ports:
+      - 80:80
+    volumes:
+      - front-end-files:/var/www/html
+    depends_on:
+      - database
+      - node-app
+      - front-app
+volumes:
+  postgres:
+  front-end-files:
